@@ -4,13 +4,13 @@ import 'package:sotsuken2/ui/ReadIngredient.dart';
 import '../Api/api.dart';
 
 class StateAllergyDetection extends StatefulWidget{
- const StateAllergyDetection({super.key});
+  const StateAllergyDetection({super.key});
   @override
   AllergyDetection_Page createState() => AllergyDetection_Page();
 }
 
 class AllergyDetection_Page extends State<StateAllergyDetection>{
-  String val = "読み込み中";
+  List<String>vals = ["読み込み中"];
   bool _isInitialized = false;
 
   @override
@@ -26,12 +26,11 @@ class AllergyDetection_Page extends State<StateAllergyDetection>{
   }
 
   void postData() async {
-    String contentList = await Api.instance.result();
+    List<String> contentList = await Api.instance.result();
     if (mounted) {
       setState(() {
         print("セットステートするで");
-        val = contentList;
-        print("vals$val");
+        vals = contentList;
       });
     }
   }
@@ -70,20 +69,29 @@ class AllergyDetection_Page extends State<StateAllergyDetection>{
                   ),
                 ),
                 Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color:Colors.deepOrange,width: 1)
+                  ),
+                  child:Container(
                     decoration: BoxDecoration(
                         border: Border.all(color:Colors.deepOrange,width: 1)
                     ),
-                    child:Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color:Colors.deepOrange,width: 1)
-                      ),
-                      margin: const EdgeInsets.all(5),
-                      width: 300,
-                      height: 320,
-                      //多分↓ここのconst邪魔になる
-                      child:Text(val,style:TextStyle(fontSize: 15)
+                    margin: const EdgeInsets.all(5),
+                    width: 300,
+                    height: 320,
+
+                    //ここが表示部分
+                    child:ListView.builder(
+                      itemCount: vals.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0)
+                              .copyWith(left: 5.0),
+                          child: Text(vals[index]),
+                        );
+                      },
                     ),
-                    ),
+                  ),
                 ),
                 Container(
                   height: 60,

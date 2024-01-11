@@ -77,8 +77,8 @@ class Api{
     return contentList;
   }
 
-  Future<String> result()async {
-    String values = "";
+  Future<List<String>> result()async {
+    List<String> values = [];
     List<String> list = getContentList();
     List<Map<String, dynamic>> databaseContent = await dblist().getData();
 
@@ -86,15 +86,15 @@ class Api{
       for(String s in list) {
         String word = dbc['foodname'];
         if (s.contains(word)) {
-          values = "$values \n $s";
+          values.add(s);
           debugPrint("追加：　$s");
           debugPrint("表示： $values");
           break;
         }
       }
     }
-    if(values == ""){
-      values = "No";
+    if(values.isEmpty){
+      values.add("No");
     }
     return values;
   }

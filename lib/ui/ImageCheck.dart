@@ -111,12 +111,12 @@ class _ImageCheckState extends State<ImageCheck> {
                               isLoading = true;
                             });
                             await Api.instance.postData(widget.image);
-                            String content = await Api.instance.result();
+                            List<String> content = await Api.instance.result();
                             setState(() {
                               isLoading = false;
                             });
 
-                            if (content != "No") {
+                            if (!content.contains("No")) {
                               Navigator.of(context).push(
                                 MaterialPageRoute(builder: (context) {
                                   return StateAllergyDetection();
@@ -133,6 +133,21 @@ class _ImageCheckState extends State<ImageCheck> {
                         ),
                       ),
                     ],
+                  ),
+                  Container(
+                    child: ElevatedButton.icon(
+                      icon: const Icon(
+                        Icons.crop,
+                        color: Colors.white,
+                      ),
+                      label: const Text("トリミング"),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                      ),
+                      onPressed: () {
+                        
+                      },
+                    ),
                   ),
                 ],
               ),
