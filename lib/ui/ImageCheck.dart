@@ -5,6 +5,7 @@ import 'package:sotsuken2/Api/api.dart';
 import 'package:sotsuken2/ui/AllergyNotDetection.dart';
 import 'dart:io';
 import 'AllergyDetection.dart';
+import '../Api/crop.dart';
 
 class ImageCheck extends StatefulWidget {
   const ImageCheck(this.image, {Key? key}) : super(key: key);
@@ -16,8 +17,11 @@ class ImageCheck extends StatefulWidget {
 
 class _ImageCheckState extends State<ImageCheck> {
   bool isLoading = false;
+  String state = "トリミング";
+
 
   Widget build(BuildContext context) {
+    Image imagepath = Image.file(File(widget.image.path));
     return Scaffold(
       body: Center(
         child: Stack(
@@ -50,7 +54,7 @@ class _ImageCheckState extends State<ImageCheck> {
 
                   Container(
                     width: 250,
-                    child: Image.file(File(widget.image.path)),
+                    child: imagepath,
                   ),
 
                   Container(
@@ -140,12 +144,25 @@ class _ImageCheckState extends State<ImageCheck> {
                         Icons.crop,
                         color: Colors.white,
                       ),
-                      label: const Text("トリミング"),
+                      label: Text(state),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white, backgroundColor: Colors.blue,
                       ),
                       onPressed: () {
-                        
+                        if(state == "トリミング"){
+                          Crop.cropImage(widget.image, (p0) => null);
+                          setState(() {
+                            state = "クリア";
+                          });
+                        }else if(state == "クリア"){
+                          Crop.clearImage((p0) => null);
+                          setState(() {
+                            state = "トリミング";
+                          });
+                        }
+                        setState(() {
+                          //imagepath更新したい
+                        });
                       },
                     ),
                   ),
