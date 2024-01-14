@@ -18,10 +18,12 @@ class ImageCheck extends StatefulWidget {
 class _ImageCheckState extends State<ImageCheck> {
   bool isLoading = false;
   String state = "トリミング";
-
+  XFile? cropimage;
+  Image? imagepath;
 
   Widget build(BuildContext context) {
-    Image imagepath = Image.file(File(widget.image.path));
+    print("Build method is called.");
+
     return Scaffold(
       body: Center(
         child: Stack(
@@ -54,7 +56,7 @@ class _ImageCheckState extends State<ImageCheck> {
 
                   Container(
                     width: 250,
-                    child: imagepath,
+                    child: imagepath ?? Image.file(File(widget.image.path)),
                   ),
 
                   Container(
@@ -148,21 +150,34 @@ class _ImageCheckState extends State<ImageCheck> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white, backgroundColor: Colors.blue,
                       ),
-                      onPressed: () {
-                        if(state == "トリミング"){
-                          Crop.cropImage(widget.image, (p0) => null);
-                          setState(() {
-                            state = "クリア";
+                      onPressed: () async {
+                        print("ボタン押されたよ:$state");
+                        if (state == "トリミング") {
+                          await Crop.cropImage(widget.image, (croppedFile) {
+                            print("トリミングだった：$croppedFile");
+                            if (croppedFile != null) {
+                              setState(() {
+                                cropimage = XFile(croppedFile.path);
+                                imagepath = Image.file(File(cropimage!.path));
+                                state = "クリア";
+                                print("cropimage:$cropimage");
+                                print("imagepath:$imagepath");
+                                print("state:$state");
+                              });
+                            }
                           });
-                        }else if(state == "クリア"){
-                          Crop.clearImage((p0) => null);
-                          setState(() {
-                            state = "トリミング";
+                        } else if (state == "クリア") {
+                          Crop.clearImage((clearedImage) {
+                            print("クリアだった：$clearedImage");
+                            if (clearedImage == null) {
+                              setState(() {
+                                cropimage = null;
+                                imagepath = null;
+                                state = "トリミング";
+                              });
+                            }
                           });
                         }
-                        setState(() {
-                          //imagepath更新したい
-                        });
                       },
                     ),
                   ),
